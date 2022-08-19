@@ -27,10 +27,12 @@ Developed on Windows
 using namespace std;
 using namespace webots;
 
-constexpr double maxMotorSpeed = 6.28;   // rad/s
-constexpr double wheel_radius = 0.0205;  // m
-constexpr double forwardTimestep = 81.5; // happy with this so far
-constexpr double turnTimestep = 36.05;   // for some reason, when i try and use 36, it completly fucks up. Use actual sensors and shit for next parts
+constexpr double maxMotorSpeed = 6.28;       // rad/s
+constexpr double wheel_radius = 0.0205;      // m
+constexpr double forwardTimestep = 81.5;     // happy with this so far
+constexpr double forwardTimestepMax = 40.75; // happy with this so far
+constexpr double turnTimestep = 36.05;       // for some reason, when i try and use 36, it completly fucks up. Use actual sensors and shit for next parts
+constexpr double turnTimestepMax = 36.05 * 0.3;
 
 const std::string MOTION_PLAN_FILE_NAME = "../../MotionPlan.txt";
 const std::string MOTION_EXECUTION_FILE_NAME = "../../MotionExecution.csv";
@@ -72,9 +74,9 @@ public:
         commandNumber++;
         leftMotor->setPosition(INFINITY);
         rightMotor->setPosition(INFINITY);
-        leftMotor->setVelocity(0.5 * maxMotorSpeed);
-        rightMotor->setVelocity(0.5 * maxMotorSpeed);
-        robot.step(timeStep * forwardTimestep); // maths in book
+        leftMotor->setVelocity(maxMotorSpeed);
+        rightMotor->setVelocity(maxMotorSpeed);
+        robot.step(timeStep * forwardTimestepMax); // maths in book
         leftMotor->setVelocity(0);
         rightMotor->setVelocity(0);
         updatePossition();
@@ -1392,7 +1394,7 @@ public:
 
                 if (prevEle == -1)
                 { // we are checking out the first node, skip
-                    // dont have to do anything
+                  // dont have to do anything
                 }
                 else if (prevPrevEle == -1)
                 { // we are in second node so check dirrection
@@ -1774,11 +1776,10 @@ int main()
     myRobot.doSteps();
     myRobot.robot.step(timeStep);
 
-
     // int i = 0;
     // while (i < 50)
     // {
-        // myRobot.goDoLap();
+    // myRobot.goDoLap();
     // }
 
     // cout << "yo wadup" << endl;
