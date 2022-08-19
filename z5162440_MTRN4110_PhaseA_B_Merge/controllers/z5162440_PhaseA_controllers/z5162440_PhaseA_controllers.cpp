@@ -1760,132 +1760,8 @@ public:
     }
 };
 
-class ObstacleAvoider extends RobotOverLord
-{
-public:
-    // setting up motors and sensors;
-    MapOverLord map;
-
-    boolean detectObstacleFront()
-    {
-        double F1, F2, F3, FA;
-        F1 = distSensForward->getValue();
-        F2 = distSensForward->getValue();
-        F3 = distSensForward->getValue();
-        FA = (F1 + F2 + F3) / 3;
-        robot.step(timeStep * 0.1);
-        return (FA > 750);
-    }
-
-    boolean doSteps()
-    {
-
-        cout << "[z5162440_MTRN4110_PhaseA] Executing motion plan..." << endl;
-
-        checkSensors();
-        printCommandLineAndCsv();
-
-        for (int i = 3; i < MotionPlanSize; i++)
-        {
-            switch (motionPlan[i])
-            {
-
-            case 'F':
-                goForward();
-                break;
-            case 'L':
-                goLeft();
-                break;
-
-            case 'R':
-                goRight();
-                break;
-            }
-        }
-
-        // idk why but if i dont do this, after the steps are completed, it just starts back up again.
-        leftMotor->setPosition(0);
-        rightMotor->setPosition(0);
-        leftMotor->setVelocity(0);
-        rightMotor->setVelocity(0);
-
-        cout << "[z5162440_MTRN4110_PhaseA] Motion plan executed!" << endl;
-    }
-
-    boolean goForward()
-    {
-        commandNumber++;
-        leftMotor->setPosition(INFINITY);
-        rightMotor->setPosition(INFINITY);
-        leftMotor->setVelocity(0.5 * maxMotorSpeed);
-        rightMotor->setVelocity(0.5 * maxMotorSpeed);
-        // DOUBLE CHECK THAT THIS ACTUALLY WORKS LATER
-        // TODO
-        while (robot.step(timeStep * forwardTimestep))
-        {
-            if (detectObstacleFront())
-            {
-                return false;
-            }
-        }
-        leftMotor->setVelocity(0);
-        rightMotor->setVelocity(0);
-        updatePossition();
-        checkSensors();
-        printCommandLineAndCsv();
-        return true;
-    }
-
-    boolean goLeft()
-    {
-        commandNumber++;
-        leftMotor->setPosition(INFINITY);
-        rightMotor->setPosition(INFINITY);
-        leftMotor->setVelocity(-0.3 * maxMotorSpeed);
-        rightMotor->setVelocity(0.3 * maxMotorSpeed);
-        // TODO
-        while (robot.step(timeStep * turnTimestep))
-        {
-            if (detectObstacleFront())
-            {
-                return false;
-            }
-        }
-        leftMotor->setVelocity(0);
-        rightMotor->setVelocity(0);
-        updateHeading('L');
-        checkSensors();
-        printCommandLineAndCsv();
-        return true;
-    }
-
-    boolean goRight()
-    {
-        commandNumber++;
-        leftMotor->setPosition(INFINITY);
-        rightMotor->setPosition(INFINITY);
-        leftMotor->setVelocity(0.3 * maxMotorSpeed);
-        rightMotor->setVelocity(-0.3 * maxMotorSpeed);
-        // TODO
-        while (robot.step(timeStep * turnTimestep))
-        {
-            if (detectObstacleFront())
-            {
-                return false;
-            }
-        }
-        leftMotor->setVelocity(0);
-        rightMotor->setVelocity(0);
-        updateHeading('R');
-        checkSensors();
-        printCommandLineAndCsv();
-        return true;
-    }
-
-}
 // IN FUTURE, HAVE EVERYTHING IN A while(robot.timestep != -1)
-int
-main()
+int main()
 {
     MapOverLord m;
     m.YEET();
@@ -1903,5 +1779,6 @@ main()
     // {
     // myRobot.goDoLap();
     // }
+
     return 0;
 }
