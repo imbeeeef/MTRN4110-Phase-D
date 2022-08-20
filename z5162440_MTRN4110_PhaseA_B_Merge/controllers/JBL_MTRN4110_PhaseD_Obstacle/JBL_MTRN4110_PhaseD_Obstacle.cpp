@@ -383,10 +383,10 @@ public:
     ofstream pathfile;
 
     // these guys gona represent each row in the array, legit just gota rowBuf[2].append ? each call to fgets when reading. Then can easily change elements in each one too
-    std::vector<std::string> rowBuf{"[JBL_4110_PhaseD] ", "[JBL_4110_PhaseD] ",
-                                    "[JBL_4110_PhaseD] ", "[JBL_4110_PhaseD] ", "[JBL_4110_PhaseD] ",
-                                    "[JBL_4110_PhaseD] ", "[JBL_4110_PhaseD] ", "[JBL_4110_PhaseD] ",
-                                    "[JBL_4110_PhaseD] ", "[JBL_4110_PhaseD] ", "[JBL_4110_PhaseD] "};
+    std::vector<std::string> rowBuf{"[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ",
+                                    "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ",
+                                    "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ",
+                                    "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] "};
 
     // these all shout be updated when this class is created
     int end = -1;
@@ -411,8 +411,8 @@ public:
     }
     void readMap()
     {
-        cout << "[JBL_4110_PhaseD] Reading in map from " << MAP_FILE_NAME << "..." << endl;
-        outfile << "[JBL_4110_PhaseD] Reading in map from " << MAP_FILE_NAME << "..." << endl;
+        cout << "[JBL_MTRN4110_PhaseD] Reading in map from " << MAP_FILE_NAME << "..." << endl;
+        outfile << "[JBL_MTRN4110_PhaseD] Reading in map from " << MAP_FILE_NAME << "..." << endl;
 
         /*
             0  1  2  3  4  5  6  7  8
@@ -1013,8 +1013,8 @@ public:
             }
         }
         minDist = dist[end];
-        cout << "[JBL_4110_PhaseD] Finding shortest paths..." << endl;
-        outfile << "[JBL_4110_PhaseD] Finding shortest paths..." << endl;
+        cout << "[JBL_MTRN4110_PhaseD] Finding shortest paths..." << endl;
+        outfile << "[JBL_MTRN4110_PhaseD] Finding shortest paths..." << endl;
     }
     void find_paths(int u)
     { // give u end when calling first gota work back
@@ -1092,7 +1092,7 @@ public:
         cout << rowBuf[8] << endl;
         cout << rowBuf[9] << endl;
         cout << rowBuf[10] << endl;
-        cout << "[JBL_4110_PhaseD] Map read in!" << endl;
+        cout << "[JBL_MTRN4110_PhaseD] Map read in!" << endl;
 
         outfile << rowBuf[0] << endl;
         outfile << rowBuf[1] << endl;
@@ -1105,7 +1105,7 @@ public:
         outfile << rowBuf[8] << endl;
         outfile << rowBuf[9] << endl;
         outfile << rowBuf[10] << endl;
-        outfile << "[JBL_4110_PhaseD] Map read in!" << endl;
+        outfile << "[JBL_MTRN4110_PhaseD] Map read in!" << endl;
     }
     void appendRowBuf(char cha, int row)
     {
@@ -1149,8 +1149,8 @@ public:
         int counter{1};
         for (auto vector : paths)
         {
-            std::cout << "[JBL_4110_PhaseD] Path - " << counter << ":" << endl;
-            outfile << "[JBL_4110_PhaseD] Path - " << counter << ":" << endl;
+            std::cout << "JBL_MTRN4110_PhaseD] Path - " << counter << ":" << endl;
+            outfile << "[JBL_MTRN4110_PhaseD] Path - " << counter << ":" << endl;
             std::vector<std::string> rowBufPath = rowBuf;
 
             int step = 0; // this just counts down the steps 15 -> 14 - >13 ->12
@@ -1197,8 +1197,8 @@ public:
             outfile << rowBufPath[9] << endl;
             outfile << rowBufPath[10] << endl;
         }
-        std::cout << "[JBL_4110_PhaseD] " << paths.size() << " shortest paths found!" << endl;
-        outfile << "[JBL_4110_PhaseD] " << paths.size() << " shortest paths found!" << endl;
+        std::cout << "JBL_MTRN4110_PhaseD] " << paths.size() << " shortest paths found!" << endl;
+        outfile << "[JBL_MTRN4110_PhaseD] " << paths.size() << " shortest paths found!" << endl;
     }
     std::vector<std::string> insertNumIntoPath(std::vector<std::string> rowBufPath, int step, int location)
     {
@@ -1207,17 +1207,22 @@ public:
         /*
                                      20 offset to start at 0
                                      then add 4 for each row
-        [JBL_4110_PhaseD]  --- --- --- --- --- --- --- --- ---     rowBufPath[0]
-        [JBL_4110_PhaseD] | v             |                   |    rowBufPath[1]           0  1  2  3  4  5  6  7  8                   // so lets do 5 if statment to select row.
-        [JBL_4110_PhaseD]      ---                 ---             rowBufPath[2]
-        [JBL_4110_PhaseD] |           |           |   |       |    rowBufPath[3]           9  10 11 12 13 14 15 16 17                  // then - 9
-        [JBL_4110_PhaseD]  ---             --- ---     ---         rowBufPath[4]
-        [JBL_4110_PhaseD] |       |   |   | x                 |    rowBufPath[5]           18 19 20 21 22 23 24 25 26                  // - 18
-        [JBL_4110_PhaseD]          ---     --- --- ---             rowBufPath[6]                                                                           +20 * num*4          then insert num
-        [JBL_4110_PhaseD] |   |                   |           |    rowBufPath[7]           27 28 29 30 31 32 33 34 35                  // - 27
-        [JBL_4110_PhaseD]          ---         ---     ---         rowBufPath[8]
-        [JBL_4110_PhaseD] |   |           |           |       |    rowBufPath[9]           36 37 38 39 40 41 42 43 44                  // -36
-        [JBL_4110_PhaseD]  --- --- --- --- --- --- --- --- ---     rowBufPath[10]
+        [JBL_MTRN4110_PhaseD]  --- --- --- --- --- --- --- --- ---     rowBufPath[0]
+        [JBL_MTRN4110_PhaseD] | v             |                   |    rowBufPath[1]           0  1  2  3  4  5  6  7  8                   // so lets do 5 if statment to select row.
+        [JBL_MTRN4110_PhaseD]      ---                 ---             rowBufPath[2]
+        [JBL_MTRN4110_PhaseD] |           |           |   |       |    rowBufPath[3]           9  10 11 12 13 14 15 16 17                  // then - 9
+        [JBL_MTRN4110_PhaseD]  ---             --- ---     ---         rowBufPath[4]
+        [JBL_MTRN4110_PhaseD] |       |   |   | x                 |    rowBufPath[5]           18 19 20 21 22 23 24 25 26                  // - 18
+        [JBL_MTRN4110_PhaseD]          ---     --- --- ---             rowBufPath[6]                                                                           +20 * num*4          then insert num
+        [JBL_MTRN4110_PhaseD] |   |                   |           |    rowBufPath[7]           27 28 29 30 31 32 33 34 35                  // - 27
+        [JBL_MTRN4110_PhaseD]          ---         ---     ---         rowBufPath[8]
+        [JBL_MTRN4110_PhaseD] |   |           |           |       |    rowBufPath[9]           36 37 38 39 40 41 42 43 44                  // -36
+        [JBL_MTRN4110_PhaseD]  --- --- --- --- --- --- --- --- ---     rowBufPath[10]
+
+
+
+
+
 
 
         */
@@ -1229,12 +1234,12 @@ public:
         {
             if (step > 9)
             {
-                rowBufPath[1].at(29 + (location * 4)) = n1; // this is just for formatting if number is 2 letters
-                rowBufPath[1].at(30 + (location * 4)) = n2;
+                rowBufPath[1].at(23 + (location * 4)) = n1; // this is just for formatting if number is 2 letters
+                rowBufPath[1].at(24 + (location * 4)) = n2;
             }
             else
             {
-                rowBufPath[1].at(29 + (location * 4)) = n2;
+                rowBufPath[1].at(23 + (location * 4)) = n2;
             }
         }
         else if (location > 8 && location < 18)
@@ -1243,12 +1248,12 @@ public:
 
             if (step > 9)
             {
-                rowBufPath[3].at(29 + (location * 4)) = n1; // this is just for formatting if number is 2 letters
-                rowBufPath[3].at(30 + (location * 4)) = n2;
+                rowBufPath[3].at(23 + (location * 4)) = n1; // this is just for formatting if number is 2 letters
+                rowBufPath[3].at(24 + (location * 4)) = n2;
             }
             else
             {
-                rowBufPath[3].at(29 + (location * 4)) = n2;
+                rowBufPath[3].at(23 + (location * 4)) = n2;
             }
         }
         else if (location > 17 && location < 27)
@@ -1257,12 +1262,12 @@ public:
 
             if (step > 9)
             {
-                rowBufPath[5].at(29 + (location * 4)) = n1; // this is just for formatting if number is 2 letters
-                rowBufPath[5].at(30 + (location * 4)) = n2;
+                rowBufPath[5].at(23 + (location * 4)) = n1; // this is just for formatting if number is 2 letters
+                rowBufPath[5].at(24 + (location * 4)) = n2;
             }
             else
             {
-                rowBufPath[5].at(29 + (location * 4)) = n2;
+                rowBufPath[5].at(23 + (location * 4)) = n2;
             }
         }
         else if (location > 26 && location < 36)
@@ -1271,12 +1276,12 @@ public:
 
             if (step > 9)
             {
-                rowBufPath[7].at(29 + (location * 4)) = n1; // this is just for formatting if number is 2 letters
-                rowBufPath[7].at(30 + (location * 4)) = n2;
+                rowBufPath[7].at(23 + (location * 4)) = n1; // this is just for formatting if number is 2 letters
+                rowBufPath[7].at(24 + (location * 4)) = n2;
             }
             else
             {
-                rowBufPath[7].at(29 + (location * 4)) = n2;
+                rowBufPath[7].at(23 + (location * 4)) = n2;
             }
         }
         else if (location > 35 && location < 45)
@@ -1285,12 +1290,12 @@ public:
 
             if (step > 9)
             {
-                rowBufPath[9].at(29 + (location * 4)) = n1; // this is just for formatting if number is 2 letters
-                rowBufPath[9].at(30 + (location * 4)) = n2;
+                rowBufPath[9].at(23 + (location * 4)) = n1; // this is just for formatting if number is 2 letters
+                rowBufPath[9].at(24 + (location * 4)) = n2;
             }
             else
             {
-                rowBufPath[9].at(29 + (location * 4)) = n2;
+                rowBufPath[9].at(23 + (location * 4)) = n2;
             }
         }
 
@@ -1369,8 +1374,8 @@ public:
         // aight so count the turns for each path
         // add these to a vector and find then min
 
-        std::cout << "[JBL_4110_PhaseD] Finding shortest path with least turns..." << endl;
-        outfile << "[JBL_4110_PhaseD] Finding shortest path with least turns..." << endl;
+        std::cout << "JBL_MTRN4110_PhaseD] Finding shortest path with least turns..." << endl;
+        outfile << "[JBL_MTRN4110_PhaseD] Finding shortest path with least turns..." << endl;
 
         vector<int> numOfTurns;
 
@@ -1512,15 +1517,15 @@ public:
         outfile << rowBufPath[9] << endl;
         outfile << rowBufPath[10] << endl;
 
-        std::cout << "[JBL_4110_PhaseD] Shortest path with least turns found!" << endl;
-        outfile << "[JBL_4110_PhaseD] Shortest path with least turns found!" << endl;
+        std::cout << "JBL_MTRN4110_PhaseD] Shortest path with least turns found!" << endl;
+        outfile << "[JBL_MTRN4110_PhaseD] Shortest path with least turns found!" << endl;
     }
     void createPathPlan()
     {
         // ok so we got our shortest path in paths[shortestPathIndex]
         // just run through it and append steps to a string
 
-        string pathPlanA = "[JBL_4110_PhaseD] Path Plan (";
+        string pathPlanA = "[JBL_MTRN4110_PhaseD] Path Plan (";
         // int num = 34;
         // pathPlan += to_string(num);
 
@@ -1738,11 +1743,11 @@ public:
         pathPlanA += pathPlanB;
         cout << pathPlanA << endl;
         outfile << pathPlanA << endl;
-        cout << "[JBL_4110_PhaseD] Writing path plan to " << PATH_PLAN_FILE_NAME << "..." << endl;
-        outfile << "[JBL_4110_PhaseD] Writing path plan to " << PATH_PLAN_FILE_NAME << "..." << endl;
+        cout << "[JBL_MTRN4110_PhaseD] Writing path plan to " << PATH_PLAN_FILE_NAME << "..." << endl;
+        outfile << "[JBL_MTRN4110_PhaseD] Writing path plan to " << PATH_PLAN_FILE_NAME << "..." << endl;
         pathfile << pathPlanB << endl;
-        cout << "[JBL_4110_PhaseD] Path plan written to " << PATH_PLAN_FILE_NAME << "!" << endl;
-        outfile << "[JBL_4110_PhaseD] Path plan written to " << PATH_PLAN_FILE_NAME << "!" << endl;
+        cout << "[JBL_MTRN4110_PhaseD] Path plan written to " << PATH_PLAN_FILE_NAME << "!" << endl;
+        outfile << "[JBL_MTRN4110_PhaseD] Path plan written to " << PATH_PLAN_FILE_NAME << "!" << endl;
     }
     void YEET()
     {
@@ -1753,9 +1758,29 @@ public:
         printShortestPath();
         createPathPlan();
     }
+
+    void Redo()
+    {
+        this->rowBuf = {"[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ",
+                        "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ",
+                        "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ",
+                        "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] "};
+        outfile.open(OUTPUT_FILE_NAME);
+        pathfile.open(PATH_PLAN_FILE_NAME);
+        std::vector<std::vector<int>> a(numNodes);
+        adj = a;
+
+        readMap();
+        printRowBuf();
+        bfs(start);
+        find_paths(end);
+        findleastTurns();
+        printShortestPath();
+        createPathPlan();
+    }
 };
 
-class ObstacleAvoider : private RobotOverLord
+class ObstacleAvoider : public RobotOverLord
 {
 public:
     // instance of map class
@@ -1764,16 +1789,22 @@ public:
     // i just need it to read in the original map without the numbers that map class returns
     // this is the map I change, and output again
     // this should be stored in map.readBuf
-    ReadOriginalMap()
+    void ReadOriginalMap()
     {
+        ofstream pathfile;
+        ofstream outfile;
         outfile.open(OUTPUT_FILE_NAME);
         pathfile.open(PATH_PLAN_FILE_NAME);
         std::vector<std::vector<int>> a(numNodes);
         map.adj = a;
+        map.rowBuf = {"[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ",
+                      "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ",
+                      "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ",
+                      "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] "};
         map.readMap();
     }
 
-    boolean detectObstacleFront()
+    bool detectObstacleFront()
     {
         double F1, F2, F3, FA;
         F1 = distSensForward->getValue();
@@ -1781,10 +1812,10 @@ public:
         F3 = distSensForward->getValue();
         FA = (F1 + F2 + F3) / 3;
         robot.step(timeStep * 0.1);
-        return (FA > 950);
+        return (FA > 750);
     }
 
-    boolean doObstacleSteps()
+    bool doObstacleSteps()
     {
         cout << "[JBL_MTRN4110_PhaseD] Executing motion plan..." << endl;
 
@@ -1793,27 +1824,25 @@ public:
 
         for (int i = 3; i < MotionPlanSize; i++)
         {
+
             switch (motionPlan[i])
             {
-
             case 'F':
-                if (!goObstacleForward())
+                // check that the front sensor senses an obstacle in front of it.
+                // check that it is not a wall.
+                // return false because it could not complete the steps.
+                if (detectObstacleFront() && !checkForWall(robotPosition(), obstaclePosition()))
                 {
                     return false;
                 }
+                goForward();
                 break;
             case 'L':
-                if (!goObstacleLeft())
-                {
-                    return false;
-                }
+                goLeft();
                 break;
 
             case 'R':
-                if (!goObstacleRight())
-                {
-                    return false;
-                }
+                goRight();
                 break;
             }
         }
@@ -1828,207 +1857,133 @@ public:
         return true;
     }
 
-    boolean goObstacleForward()
-    {
-        commandNumber++;
-        leftMotor->setPosition(INFINITY);
-        rightMotor->setPosition(INFINITY);
-        leftMotor->setVelocity(0.5 * maxMotorSpeed);
-        rightMotor->setVelocity(0.5 * maxMotorSpeed);
-        // DOUBLE CHECK THAT THIS ACTUALLY WORKS LATER
-        // TODO
-        while (robot.step(timeStep * forwardTimestep))
-        {
-            if (detectObstacleFront())
-            {
-                return false;
-            }
-        }
-        leftMotor->setVelocity(0);
-        rightMotor->setVelocity(0);
-        updatePossition();
-        checkSensors();
-        printCommandLineAndCsv();
-        return true;
-    }
-
-    boolean goObstacleLeft()
-    {
-        commandNumber++;
-        leftMotor->setPosition(INFINITY);
-        rightMotor->setPosition(INFINITY);
-        leftMotor->setVelocity(-0.3 * maxMotorSpeed);
-        rightMotor->setVelocity(0.3 * maxMotorSpeed);
-        // TODO
-        while (robot.step(timeStep * turnTimestep))
-        {
-            if (detectObstacleFront())
-            {
-                return false;
-            }
-        }
-        leftMotor->setVelocity(0);
-        rightMotor->setVelocity(0);
-        updateHeading('L');
-        checkSensors();
-        printCommandLineAndCsv();
-        return true;
-    }
-
-    boolean goObstacleRight()
-    {
-        commandNumber++;
-        leftMotor->setPosition(INFINITY);
-        rightMotor->setPosition(INFINITY);
-        leftMotor->setVelocity(0.3 * maxMotorSpeed);
-        rightMotor->setVelocity(-0.3 * maxMotorSpeed);
-        // TODO
-        while (robot.step(timeStep * turnTimestep))
-        {
-            if (detectObstacleFront())
-            {
-                return false;
-            }
-        }
-        leftMotor->setVelocity(0);
-        rightMotor->setVelocity(0);
-        updateHeading('R');
-        checkSensors();
-        printCommandLineAndCsv();
-        return true;
-    }
-
-    std::vector<std::string> addHorizontalWall(int index)
+    void addHorizontalWall(int index)
     {
         int location = obstaclePosition();
-        map.rowBuf[index].at(29 + (location * 4) - 1) = '-';
-        map.rowBuf[index].at(29 + (location * 4)) = '-';
-        map.rowBuf[index].at(29 + (location * 4) + 1) = '-';
-        return map.rowBuf;
+        map.rowBuf[index].at(23 + (location * 4) - 1) = '-';
+        map.rowBuf[index].at(23 + (location * 4)) = '-';
+        map.rowBuf[index].at(23 + (location * 4) + 1) = '-';
     }
 
-    std::vector<std::string> addVerticalWall(int index)
+    void addVerticalWall(int index)
     {
         int location = obstaclePosition();
-        map.rowBuf[index].at(29 + (location * 4) - 2) = '|';
-        map.rowBuf[index].at(29 + (location * 4) + 2) = '|';
-        return map.rowBuf;
+        map.rowBuf[index].at(23 + (location * 4) - 2) = '|';
+        map.rowBuf[index].at(23 + (location * 4) + 2) = '|';
     }
 
-    std::vector<std::string> addRobot(int index)
+    void addRobot(int index)
     {
         int location = robotPosition();
         switch (heading)
         {
         case 'N':
-            map.rowBuf[index].at(29 + (location * 4)) = '^';
+            map.rowBuf[index].at(23 + (location * 4)) = '^';
             break;
         case 'S':
-            map.rowBuf[index].at(29 + (location * 4)) = 'v';
+            map.rowBuf[index].at(23 + (location * 4)) = 'v';
             break;
         case 'E':
-            map.rowBuf[index].at(29 + (location * 4)) = '>';
+            map.rowBuf[index].at(23 + (location * 4)) = '>';
             break;
         case 'W':
-            map.rowBuf[index].at(29 + (location * 4)) = '<';
+            map.rowBuf[index].at(23 + (location * 4)) = '<';
             break;
         }
-        return map.rowBuf;
     }
 
-    std::vector<std::string> insertObstacleIntoMap()
+    void insertObstacleIntoMap()
     {
         // location is the location of the obstacle - it takes up the entire cell.
         int location = obstaclePosition();
         if (location < 9)
         {
-            addVerticalWall(map.rowBuf, 1, location);
-            addHorizontalWall(map.rowBuf, 2, location);
+            addVerticalWall(1);
+            addHorizontalWall(2);
         }
         else if (location > 8 && location < 18)
         {
             location = location - 9;
-            addVerticalWall(map.rowBuf, 3, location);
-            addHorizontalWall(map.rowBuf, 2, location);
-            addHorizontalWall(map.rowBuf, 4, location);
+            addVerticalWall(3);
+            addHorizontalWall(2);
+            addHorizontalWall(4);
         }
         else if (location > 17 && location < 27)
         {
             location = location - 18;
-            addVerticalWall(map.rowBuf, 5, location);
-            addHorizontalWall(map.rowBuf, 4, location);
-            addHorizontalWall(map.rowBuf, 6, location);
+            addVerticalWall(5);
+            addHorizontalWall(4);
+            addHorizontalWall(6);
         }
         else if (location > 26 && location < 36)
         {
             location = location - 27;
-            addVerticalWall(map.rowBuf, 7, location);
-            addHorizontalWall(map.rowBuf, 6, location);
-            addHorizontalWall(map.rowBuf, 8, location);
+            addVerticalWall(7);
+            addHorizontalWall(6);
+            addHorizontalWall(8);
         }
         else if (location > 35 && location < 45)
         {
             location = location - 36;
-            addVerticalWall(map.rowBuf, 9, location);
-            addHorizontalWall(map.rowBuf, 8, location);
+            addVerticalWall(9);
+            addHorizontalWall(8);
         }
-
-        return rowBufPath;
     }
 
-    std::vector<std::string> updateRobotPosition()
+    void updateRobotPosition()
     {
         int location = robotPosition();
-        for (int i = 0; i < MAX_ROW; i++)
+        for (int i = 0; i < 11; i++)
         {
-            for (int j = 0; j < MAX_COL; j++)
-            {
-                map.rowBuf[i].at(j) = ' ';
-            }
+            std::replace(map.rowBuf[i].begin(), map.rowBuf[i].end(), 'v', ' ');
+            std::replace(map.rowBuf[i].begin(), map.rowBuf[i].end(), '<', ' ');
+            std::replace(map.rowBuf[i].begin(), map.rowBuf[i].end(), '>', ' ');
+            std::replace(map.rowBuf[i].begin(), map.rowBuf[i].end(), '^', ' ');
         }
 
         if (location < 9)
         {
-            addRobot(map.rowBuf, 1, location, heading);
+            addRobot(1);
         }
         else if (location > 8 && location < 18)
         {
             location = location - 9;
-            addRobot(map.rowBuf, 3, location, heading);
+            addRobot(3);
         }
         else if (location > 17 && location < 27)
         {
             location = location - 18;
-            addRobot(map.rowBuf, 5, location, heading);
+            addRobot(5);
         }
         else if (location > 26 && location < 36)
         {
             location = location - 27;
-            addRobot(map.rowBuf, 7, location, heading);
+            addRobot(7);
         }
         else if (location > 35 && location < 45)
         {
             location = location - 36;
-            addRobot(map.rowBuf, 9, location, heading);
+            addRobot(9);
         }
     }
 
     int obstaclePosition()
     {
         int robot = robotPosition();
+        int location = robot;
         switch (heading)
         {
         case 'N':
-            map.rowBuf[index].at(29 + (location * 4)) = '^';
+            return robot - 9;
             break;
         case 'S':
-            map.rowBuf[index].at(29 + (location * 4)) = 'v';
+            return robot + 9;
             break;
         case 'E':
-            map.rowBuf[index].at(29 + (location * 4)) = '>';
+            return robot + 1;
             break;
         case 'W':
-            map.rowBuf[index].at(29 + (location * 4)) = '<';
+            return robot - 1;
             break;
         }
     }
@@ -2038,22 +1993,46 @@ public:
         return gridLong * 9 + gridLat;
     }
 
+    bool checkForWall(int robotLoc, int adjNode)
+    {
+        int counter{0};
+        for (auto vector : map.adj)
+        {
+            if (counter == robotLoc)
+            {
+                for (auto elem : vector)
+                {
+                    if (elem == adjNode)
+                    {
+                        return false;
+                    }
+                }
+            }
+            counter++;
+        }
+        return true;
+    }
+
     void overwriteMap()
     {
+        std::vector<std::string> output = map.rowBuf;
         ofstream outfile;
         outfile.open(MAP_FILE_NAME);
         for (int i = 0; i < 11; i++)
         {
-            outfile << map.rowBuf[i] << endl;
+            output[i].erase(0, 22);
+            outfile << output[i] << endl;
+            std::cout << output[i] << endl;
         }
     }
-}
+};
 
-int
-main()
+int main()
 {
     MapOverLord m;
+    std::cout << "print initialise map" << std::endl;
     m.YEET();
+    std::cout << "print after yeet" << std::endl;
 
     ObstacleAvoider myRobot;
     const int timeStep = static_cast<int>(myRobot.robot.getBasicTimeStep());
@@ -2065,8 +2044,9 @@ main()
     // if robot can't complete steps, update the map and run m.YEET() again.
     while (!myRobot.doObstacleSteps())
     {
+        myRobot.ReadOriginalMap();
         myRobot.overwriteMap();
-        m.YEET();
+        m.Redo();
     }
 
     myRobot.robot.step(timeStep);
