@@ -30,9 +30,9 @@ using namespace webots;
 constexpr double maxMotorSpeed = 6.28;   // rad/s
 constexpr double wheel_radius = 0.0205;  // m
 constexpr double forwardTimestep = 81.5; // happy with this so far
-constexpr double turnTimestep = 36.05;   // for some reason, when i try and use 36, it completly fucks up. Use actual sensors and shit for next parts
+constexpr double forwardTimestepFraction = 40.75;
+constexpr double turnTimestep = 36.05; // for some reason, when i try and use 36, it completly fucks up. Use actual sensors and shit for next parts
 
-const std::string MOTION_PLAN_FILE_NAME = "../../MotionPlan.txt";
 const std::string MOTION_EXECUTION_FILE_NAME = "../../MotionExecution.csv";
 const std::string MAP_FILE_NAME = "../../Map.txt";
 const std::string OUTPUT_FILE_NAME = "../../Output.txt";
@@ -289,10 +289,10 @@ public:
     void readMotionPlan()
     {
 
-        std::ifstream myfile(MOTION_PLAN_FILE_NAME);
-
+        std::ifstream myfile(PATH_PLAN_FILE_NAME);
         if (myfile.is_open())
         {
+            std::cout << "about to read from " << PATH_PLAN_FILE_NAME << " :" << std::endl;
             myfile >> motionPlan;
             MotionPlanSize = motionPlan.length();
             if (MotionPlanSize > 2)
@@ -302,13 +302,13 @@ public:
                 heading = motionPlan[2];
                 commandNumber = 0;
                 checkSensors();
-                cout << "[z5162440_MTRN4110_PhaseA] Reading in motion plan from ../../MotionPlan.txt..." << endl;
+                cout << "[z5162440_MTRN4110_PhaseA] Reading in motion plan from ../../PathPlan.txt..." << endl;
                 cout << "[z5162440_MTRN4110_PhaseA] Motion Plan: " << motionPlan << endl;
                 cout << "[z5162440_MTRN4110_PhaseA] Motion plan read in!" << endl;
             }
         }
         else
-            cout << "couldnt open" << endl;
+            std::cout << "couldnt open" << endl;
         myfile.close();
     }
 
@@ -402,8 +402,7 @@ public:
         //  vector of vectors is used to store the graph
         //  in the form of an adjacency list
         // from tute
-        outfile.open(OUTPUT_FILE_NAME);
-        pathfile.open(PATH_PLAN_FILE_NAME);
+
         std::vector<std::vector<int>> a(numNodes);
         adj = a;
         readMap();
@@ -1076,7 +1075,6 @@ public:
     void printRowBuf()
     {
 
-        // char c[20] = "wazzzzzzzzzzup";
         // rowBuf[3].append(c);
         // rowBuf[3].at(1) = 'y';
 
@@ -1745,12 +1743,20 @@ public:
         outfile << pathPlanA << endl;
         cout << "[JBL_MTRN4110_PhaseD] Writing path plan to " << PATH_PLAN_FILE_NAME << "..." << endl;
         outfile << "[JBL_MTRN4110_PhaseD] Writing path plan to " << PATH_PLAN_FILE_NAME << "..." << endl;
+        pathfile.close();
+
+        pathfile.open(PATH_PLAN_FILE_NAME);
         pathfile << pathPlanB << endl;
+        pathfile.close();
+
+        pathfile.open(PATH_PLAN_FILE_NAME, ios_base::out | ios_base::app);
         cout << "[JBL_MTRN4110_PhaseD] Path plan written to " << PATH_PLAN_FILE_NAME << "!" << endl;
         outfile << "[JBL_MTRN4110_PhaseD] Path plan written to " << PATH_PLAN_FILE_NAME << "!" << endl;
     }
     void YEET()
     {
+        outfile.open(OUTPUT_FILE_NAME);
+        pathfile.open(PATH_PLAN_FILE_NAME, ios_base::out | ios_base::app);
         bfs(start);
         find_paths(end);
         printAllShortestPaths();
@@ -1765,18 +1771,27 @@ public:
                         "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ",
                         "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ",
                         "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] "};
+        clearMap();
         outfile.open(OUTPUT_FILE_NAME);
-        pathfile.open(PATH_PLAN_FILE_NAME);
+        pathfile.open(PATH_PLAN_FILE_NAME, ios_base::out | ios_base::app);
         std::vector<std::vector<int>> a(numNodes);
         adj = a;
 
         readMap();
         printRowBuf();
+        std::cout << "new start is " << start << " and new end is " << end << std::endl;
         bfs(start);
         find_paths(end);
         findleastTurns();
         printShortestPath();
         createPathPlan();
+    }
+
+    void clearMap()
+    {
+        this->adj.clear();
+        this->paths.clear();
+        this->path.clear();
     }
 };
 
@@ -1794,7 +1809,7 @@ public:
         ofstream pathfile;
         ofstream outfile;
         outfile.open(OUTPUT_FILE_NAME);
-        pathfile.open(PATH_PLAN_FILE_NAME);
+        pathfile.open(PATH_PLAN_FILE_NAME, ios_base::out | ios_base::app);
         std::vector<std::vector<int>> a(numNodes);
         map.adj = a;
         map.rowBuf = {"[JBL_MTRN4110_PhaseD] ", "[JBL_MTRN4110_PhaseD] ",
@@ -1806,19 +1821,24 @@ public:
 
     bool detectObstacleFront()
     {
-        double F1, F2, F3, FA;
-        F1 = distSensForward->getValue();
-        F2 = distSensForward->getValue();
-        F3 = distSensForward->getValue();
-        FA = (F1 + F2 + F3) / 3;
-        robot.step(timeStep * 0.1);
-        return (FA > 750);
+        double Fsum{0};
+        double FA;
+        for (int i = 0; i < 25; i++)
+        {
+            Fsum = Fsum + distSensForward->getValue();
+            robot.step(timeStep * 0.1);
+        }
+        FA = (Fsum) / 25;
+        std::cout << "average is " << FA << std::endl;
+        return (FA < 750);
     }
 
+    // 0 stands for OBSTACLE DETECTED.
+    // 1 STANDS FOR NO OBSTACLE DETECTED.
     bool doObstacleSteps()
     {
-        cout << "[JBL_MTRN4110_PhaseD] Executing motion plan..." << endl;
-
+        std::cout << "[JBL_MTRN4110_PhaseD] Executing motion plan..." << endl;
+        std::cout << "Motion plan is " << motionPlan << std::endl;
         checkSensors();
         printCommandLineAndCsv();
 
@@ -1835,7 +1855,10 @@ public:
                 {
                     return false;
                 }
-                goForward();
+                if (!goObstacleForward())
+                {
+                    return false;
+                }
                 break;
             case 'L':
                 goLeft();
@@ -1854,117 +1877,123 @@ public:
         rightMotor->setVelocity(0);
 
         cout << "[JBL_MTRN4110_PhaseD] Motion plan executed!" << endl;
-        return true;
+        return 2;
     }
 
-    void addHorizontalWall(int index)
+    std::vector<std::string> addHorizontalWall(std::vector<std::string> rowBuffer, int location, int index)
     {
-        int location = obstaclePosition();
-        map.rowBuf[index].at(23 + (location * 4) - 1) = '-';
-        map.rowBuf[index].at(23 + (location * 4)) = '-';
-        map.rowBuf[index].at(23 + (location * 4) + 1) = '-';
+        // int location = obstaclePosition();
+
+        rowBuffer[index].at(24 + (location * 4) - 1) = '-';
+        rowBuffer[index].at(24 + (location * 4)) = '-';
+        rowBuffer[index].at(24 + (location * 4) + 1) = '-';
+        return rowBuffer;
     }
 
-    void addVerticalWall(int index)
+    std::vector<std::string> addVerticalWall(std::vector<std::string> rowBuffer, int location, int index)
     {
-        int location = obstaclePosition();
-        map.rowBuf[index].at(23 + (location * 4) - 2) = '|';
-        map.rowBuf[index].at(23 + (location * 4) + 2) = '|';
+        // int location = obstaclePosition();
+        rowBuffer[index].at(24 + (location * 4) - 2) = '|';
+        rowBuffer[index].at(24 + (location * 4) + 2) = '|';
+        return rowBuffer;
     }
 
-    void addRobot(int index)
+    std::vector<std::string> addRobot(std::vector<std::string> rowBuffer, int location, int index)
     {
-        int location = robotPosition();
+        // int location = robotPosition();
         switch (heading)
         {
         case 'N':
-            map.rowBuf[index].at(23 + (location * 4)) = '^';
+            rowBuffer[index].at(24 + (location * 4)) = '^';
             break;
         case 'S':
-            map.rowBuf[index].at(23 + (location * 4)) = 'v';
+            rowBuffer[index].at(24 + (location * 4)) = 'v';
             break;
         case 'E':
-            map.rowBuf[index].at(23 + (location * 4)) = '>';
+            rowBuffer[index].at(24 + (location * 4)) = '>';
             break;
         case 'W':
-            map.rowBuf[index].at(23 + (location * 4)) = '<';
+            rowBuffer[index].at(24 + (location * 4)) = '<';
             break;
         }
+        return rowBuffer;
     }
 
-    void insertObstacleIntoMap()
+    std::vector<std::string> insertObstacleIntoMap(std::vector<std::string> rowBuffer)
     {
         // location is the location of the obstacle - it takes up the entire cell.
         int location = obstaclePosition();
         if (location < 9)
         {
-            addVerticalWall(1);
-            addHorizontalWall(2);
+            rowBuffer = addVerticalWall(rowBuffer, location, 1);
+            rowBuffer = addHorizontalWall(rowBuffer, location, 2);
         }
         else if (location > 8 && location < 18)
         {
             location = location - 9;
-            addVerticalWall(3);
-            addHorizontalWall(2);
-            addHorizontalWall(4);
+            rowBuffer = addVerticalWall(rowBuffer, location, 3);
+            rowBuffer = addHorizontalWall(rowBuffer, location, 2);
+            rowBuffer = addHorizontalWall(rowBuffer, location, 4);
         }
         else if (location > 17 && location < 27)
         {
             location = location - 18;
-            addVerticalWall(5);
-            addHorizontalWall(4);
-            addHorizontalWall(6);
+            rowBuffer = addVerticalWall(rowBuffer, location, 5);
+            rowBuffer = addHorizontalWall(rowBuffer, location, 4);
+            rowBuffer = addHorizontalWall(rowBuffer, location, 6);
         }
         else if (location > 26 && location < 36)
         {
             location = location - 27;
-            addVerticalWall(7);
-            addHorizontalWall(6);
-            addHorizontalWall(8);
+            rowBuffer = addVerticalWall(rowBuffer, location, 7);
+            rowBuffer = addHorizontalWall(rowBuffer, location, 6);
+            rowBuffer = addHorizontalWall(rowBuffer, location, 8);
         }
         else if (location > 35 && location < 45)
         {
             location = location - 36;
-            addVerticalWall(9);
-            addHorizontalWall(8);
+            rowBuffer = addVerticalWall(rowBuffer, location, 9);
+            rowBuffer = addHorizontalWall(rowBuffer, location, 8);
         }
+        return rowBuffer;
     }
 
-    void updateRobotPosition()
+    std::vector<std::string> updateRobotPosition(std::vector<std::string> rowBuffer)
     {
         int location = robotPosition();
         for (int i = 0; i < 11; i++)
         {
-            std::replace(map.rowBuf[i].begin(), map.rowBuf[i].end(), 'v', ' ');
-            std::replace(map.rowBuf[i].begin(), map.rowBuf[i].end(), '<', ' ');
-            std::replace(map.rowBuf[i].begin(), map.rowBuf[i].end(), '>', ' ');
-            std::replace(map.rowBuf[i].begin(), map.rowBuf[i].end(), '^', ' ');
+            std::replace(rowBuffer[i].begin(), rowBuffer[i].end(), 'v', ' ');
+            std::replace(rowBuffer[i].begin(), rowBuffer[i].end(), '<', ' ');
+            std::replace(rowBuffer[i].begin(), rowBuffer[i].end(), '>', ' ');
+            std::replace(rowBuffer[i].begin(), rowBuffer[i].end(), '^', ' ');
         }
 
         if (location < 9)
         {
-            addRobot(1);
+            rowBuffer = addRobot(rowBuffer, location, 1);
         }
         else if (location > 8 && location < 18)
         {
             location = location - 9;
-            addRobot(3);
+            rowBuffer = addRobot(rowBuffer, location, 3);
         }
         else if (location > 17 && location < 27)
         {
             location = location - 18;
-            addRobot(5);
+            rowBuffer = addRobot(rowBuffer, location, 5);
         }
         else if (location > 26 && location < 36)
         {
             location = location - 27;
-            addRobot(7);
+            rowBuffer = addRobot(rowBuffer, location, 7);
         }
         else if (location > 35 && location < 45)
         {
             location = location - 36;
-            addRobot(9);
+            rowBuffer = addRobot(rowBuffer, location, 9);
         }
+        return rowBuffer;
     }
 
     int obstaclePosition()
@@ -2004,6 +2033,7 @@ public:
                 {
                     if (elem == adjNode)
                     {
+                        std::cout << "robot is in " << counter << " and obstacle is on " << elem << std::endl;
                         return false;
                     }
                 }
@@ -2018,19 +2048,55 @@ public:
         std::vector<std::string> output = map.rowBuf;
         ofstream outfile;
         outfile.open(MAP_FILE_NAME);
+        output = insertObstacleIntoMap(output);
+        output = updateRobotPosition(output);
         for (int i = 0; i < 11; i++)
         {
             output[i].erase(0, 22);
             outfile << output[i] << endl;
+            std::cout << "writing to map.txt" << std::endl;
             std::cout << output[i] << endl;
         }
+    }
+
+    // returns false if it cant go forward halfway through
+    bool goObstacleForward()
+    {
+        commandNumber++;
+        leftMotor->setPosition(INFINITY);
+        rightMotor->setPosition(INFINITY);
+        leftMotor->setVelocity(0.5 * maxMotorSpeed);
+        rightMotor->setVelocity(0.5 * maxMotorSpeed);
+        std::cout << "going forward" << std::endl;
+        robot.step(timeStep * forwardTimestepFraction); // maths in book
+        leftMotor->setVelocity(0);
+        rightMotor->setVelocity(0);
+        if (detectObstacleFront() && !checkForWall(robotPosition(), obstaclePosition()))
+        {
+            std::cout << "[JBL_MTRN4110_PhaseD] Obstacle detected halfway. Rewinding to nearest cell." << std::endl;
+            leftMotor->setVelocity(-0.5 * maxMotorSpeed);
+            rightMotor->setVelocity(-0.5 * maxMotorSpeed);
+            robot.step(timeStep * forwardTimestepFraction);
+            leftMotor->setVelocity(0);
+            rightMotor->setVelocity(0);
+            return false;
+        }
+        leftMotor->setVelocity(0.5 * maxMotorSpeed);
+        rightMotor->setVelocity(0.5 * maxMotorSpeed);
+        std::cout << "going forward" << std::endl;
+        robot.step(timeStep * forwardTimestepFraction);
+        leftMotor->setVelocity(0);
+        rightMotor->setVelocity(0);
+        updatePossition();
+        checkSensors();
+        printCommandLineAndCsv();
+        return true;
     }
 };
 
 int main()
 {
     MapOverLord m;
-    std::cout << "print initialise map" << std::endl;
     m.YEET();
     std::cout << "print after yeet" << std::endl;
 
@@ -2038,6 +2104,7 @@ int main()
     const int timeStep = static_cast<int>(myRobot.robot.getBasicTimeStep());
     myRobot.enableDistSensors();
 
+    std::cout << "******************** about it read in MOTION PLAN" << std::endl;
     myRobot.readMotionPlan();
     myRobot.createCsvFile();
 
@@ -2047,8 +2114,9 @@ int main()
         myRobot.ReadOriginalMap();
         myRobot.overwriteMap();
         m.Redo();
+        myRobot.motionPlan.clear();
+        myRobot.readMotionPlan();
     }
-
     myRobot.robot.step(timeStep);
 
     // int i = 0;

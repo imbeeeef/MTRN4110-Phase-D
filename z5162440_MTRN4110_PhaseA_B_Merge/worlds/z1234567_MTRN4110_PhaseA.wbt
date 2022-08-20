@@ -3,8 +3,8 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation -0.9999688029847554 -0.00611507975543526 -0.004999885680706882 1.3708308818487447
-  position -0.006139790362246289 3.188353637440087 0.454195946508496
+  orientation 0.9999945503541854 0.0032976461578540645 0.00015745395470099046 4.8023511273633535
+  position -0.0065308447487177545 2.372139244116066 0.21593127572653378
 }
 TexturedBackground {
 }
@@ -469,7 +469,7 @@ DEF MAZE Group {
 DEF z1234567 E-puck {
   translation -0.66 0 -0.33
   rotation 0 1 0 3.141592653589793
-  controller "void"
+  controller "JBL_MTRN4110_PhaseD_Obstacle"
   camera_width 320
   camera_height 240
   turretSlot [
@@ -507,4 +507,7 @@ DEF z1234567 E-puck {
       noise 0.02
     }
   ]
+}
+Ball {
+  translation -0.5 0 -0.16
 }
