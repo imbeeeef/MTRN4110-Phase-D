@@ -292,7 +292,6 @@ public:
         std::ifstream myfile(PATH_PLAN_FILE_NAME);
         if (myfile.is_open())
         {
-            std::cout << "about to read from " << PATH_PLAN_FILE_NAME << " :" << std::endl;
             myfile >> motionPlan;
             MotionPlanSize = motionPlan.length();
             if (MotionPlanSize > 2)
@@ -965,8 +964,9 @@ public:
             counter++;
         }
     }
-    void bfs(int start)
+    bool bfs(int start)
     {
+        bool found = false;
         // this bfs only needs a start and no end.
         // its just meant to find all the parents in the shortest path to each node
         // CODE BASED OFF https://www.geeksforgeeks.org/print-all-shortest-paths-between-given-source-and-destination-in-an-undirected-graph/   CODE BASED OFF
@@ -1001,6 +1001,7 @@ public:
                     q.push(v);
                     parent[v].clear();
                     parent[v].push_back(u);
+                    found = true;
                 }
                 else if (dist[v] == dist[u] + 1)
                 {
@@ -1008,12 +1009,14 @@ public:
                     // Another candidate parent for
                     // shortes path found
                     parent[v].push_back(u);
+                    found = true;
                 }
             }
         }
         minDist = dist[end];
         cout << "[JBL_MTRN4110_PhaseD] Finding shortest paths..." << endl;
         outfile << "[JBL_MTRN4110_PhaseD] Finding shortest paths..." << endl;
+        return found;
     }
     void find_paths(int u)
     { // give u end when calling first gota work back
@@ -1779,8 +1782,10 @@ public:
 
         readMap();
         printRowBuf();
-        std::cout << "new start is " << start << " and new end is " << end << std::endl;
-        bfs(start);
+        if (!bfs(start))
+        {
+            std::cout << "[JBL_MTRN4110_PhaseD] Unable to reach the goal. This module will terminate here." << std::endl;
+        }
         find_paths(end);
         findleastTurns();
         printShortestPath();
@@ -1829,7 +1834,6 @@ public:
             robot.step(timeStep * 0.1);
         }
         FA = (Fsum) / 25;
-        std::cout << "average is " << FA << std::endl;
         return (FA < 750);
     }
 
@@ -1838,7 +1842,7 @@ public:
     bool doObstacleSteps()
     {
         std::cout << "[JBL_MTRN4110_PhaseD] Executing motion plan..." << endl;
-        std::cout << "Motion plan is " << motionPlan << std::endl;
+        std::cout << "[JBL_MTRN4110_PhaseD] Motion plan is " << motionPlan << std::endl;
         checkSensors();
         printCommandLineAndCsv();
 
@@ -2033,7 +2037,6 @@ public:
                 {
                     if (elem == adjNode)
                     {
-                        std::cout << "robot is in " << counter << " and obstacle is on " << elem << std::endl;
                         return false;
                     }
                 }
@@ -2054,7 +2057,6 @@ public:
         {
             output[i].erase(0, 22);
             outfile << output[i] << endl;
-            std::cout << "writing to map.txt" << std::endl;
             std::cout << output[i] << endl;
         }
     }
@@ -2067,7 +2069,6 @@ public:
         rightMotor->setPosition(INFINITY);
         leftMotor->setVelocity(0.5 * maxMotorSpeed);
         rightMotor->setVelocity(0.5 * maxMotorSpeed);
-        std::cout << "going forward" << std::endl;
         robot.step(timeStep * forwardTimestepFraction); // maths in book
         leftMotor->setVelocity(0);
         rightMotor->setVelocity(0);
@@ -2083,7 +2084,6 @@ public:
         }
         leftMotor->setVelocity(0.5 * maxMotorSpeed);
         rightMotor->setVelocity(0.5 * maxMotorSpeed);
-        std::cout << "going forward" << std::endl;
         robot.step(timeStep * forwardTimestepFraction);
         leftMotor->setVelocity(0);
         rightMotor->setVelocity(0);
@@ -2098,13 +2098,11 @@ int main()
 {
     MapOverLord m;
     m.YEET();
-    std::cout << "print after yeet" << std::endl;
 
     ObstacleAvoider myRobot;
     const int timeStep = static_cast<int>(myRobot.robot.getBasicTimeStep());
     myRobot.enableDistSensors();
 
-    std::cout << "******************** about it read in MOTION PLAN" << std::endl;
     myRobot.readMotionPlan();
     myRobot.createCsvFile();
 
