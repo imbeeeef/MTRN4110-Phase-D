@@ -5,8 +5,7 @@ Developed on Windows
 */
 
 #include "JBL_PhaseD_Const.h"
-#include "JBL_MTRN4110_PhaseD_Obstacle.cpp"
-#include "Manual_Map.cpp"
+
 using namespace phaseD_constants;
 
 class RobotOverLord
@@ -38,11 +37,6 @@ public:
     char obsticalRight = 'N';
 
     Keyboard keyboard;
-
-    webots::Robot getRobotInstance()
-    {
-        return this->robot;
-    }
 
     void goForward()
     {
@@ -353,7 +347,7 @@ public:
         while (robot.step(timeStep) != -1)
         {
             key = keyboard.getKey();
-            if (key == 49 || key == 50 || key == 51 || key == 52)
+            if (key == 49 || key == 50)
             {
                 break;
             }
@@ -364,10 +358,6 @@ public:
             return 1;
         case 50:
             return 2;
-        case 51:
-            return 3;
-        case 52:
-            return 4;
         }
     }
 };
@@ -1767,9 +1757,7 @@ int main()
 {
     std::cout << "[JBL_4110_PhaseD] Which Module would you like to run?" << std::endl;
     std::cout << "[JBL_4110_PhaseD] Enter 1 for Phase A,B,C" << std::endl;
-    std::cout << "[JBL_4110_PhaseD] Enter 2 for Obstacle Detection" << std::endl;
-    std::cout << "[JBL_4110_PhaseD] Enter 3 for Manual Control" << std::endl;
-    std::cout << "[JBL_4110_PhaseD] Enter 4 for Robot Tracking" << std::endl;
+    std::cout << "[JBL_4110_PhaseD] Enter 2 for Robot Tracking" << std::endl;
     RobotOverLord *myRobot = new RobotOverLord{};
     int key = myRobot->getKeyboardInput();
     if (key == 1)
@@ -1784,16 +1772,6 @@ int main()
         myRobot->doSteps();
     }
     else if (key == 2)
-    {
-        std::cout << "[JBL_4110_PhaseD] Please make sure the world is JBL_MTRN4110_PhaseD_Obstacle." << std::endl;
-        // system("python Phase_C_Final.py");
-        ObstacleMain(myRobot->getRobotInstance());
-    }
-    else if (key == 3)
-    {
-        ManualMain(myRobot->getRobotInstance());
-    }
-    else if (key == 4)
     {
         system("python Phase_C_Final.py");
         MapOverLord *m = new MapOverLord{};
