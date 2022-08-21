@@ -22,6 +22,7 @@ Developed on Windows
 #include <webots/Motor.hpp>
 #include <webots/DistanceSensor.hpp>
 #include <webots/InertialUnit.hpp>
+#include <webots/Supervisor.hpp>
 #include <math.h>
 
 using namespace std;
@@ -36,14 +37,14 @@ const std::string MOTION_PLAN_FILE_NAME = "../../MotionPlan.txt";
 const std::string MOTION_EXECUTION_FILE_NAME = "../../MotionExecution.csv";
 const std::string MAP_FILE_NAME = "../../Map.txt";
 const std::string OUTPUT_FILE_NAME = "../../Output.txt";
-const std::string PATH_PLAN_FILE_NAME = "../../PathPlan.txt";
+const std::string PATH_PLAN_FILE_NAME = "../../MotionPlan.txt";
 int const numNodes = 45; // 0-44
 
 class RobotOverLord
 {
 public:
     // setting up motors and sensors;
-    webots::Robot robot;
+    webots::Supervisor robot;
     const int timeStep = static_cast<int>(robot.getBasicTimeStep());
     std::unique_ptr<webots::Motor> leftMotor{robot.getMotor("left wheel motor")};
     std::unique_ptr<webots::Motor> rightMotor{robot.getMotor("right wheel motor")};
@@ -1763,22 +1764,34 @@ public:
 // IN FUTURE, HAVE EVERYTHING IN A while(robot.timestep != -1)
 int main()
 {
-    MapOverLord m;
-    m.YEET();
+    system("python Phase_C_Final.py");
+    MapOverLord *m = new MapOverLord{};
+    m->YEET();
 
-    RobotOverLord myRobot;
-    const int timeStep = static_cast<int>(myRobot.robot.getBasicTimeStep());
-    myRobot.enableDistSensors();
-    myRobot.readMotionPlan();
-    myRobot.createCsvFile();
-    myRobot.doSteps();
-    myRobot.robot.step(timeStep);
+    RobotOverLord *myRobot = new RobotOverLord{};
+    myRobot->robot.movieStartRecording("../../Video.mp4", 1280, 720, 'M', 25, 2, false);
+    const int timeStep = static_cast<int>(myRobot->robot.getBasicTimeStep());
+    myRobot->enableDistSensors();
+    myRobot->readMotionPlan();
+    myRobot->createCsvFile();
+    myRobot->doSteps();
+    myRobot->robot.step(timeStep);
+    myRobot->robot.movieStopRecording();
+
+    // Implementing motion tracking program
+    while (!myRobot->robot.movieIsReady())
+    {
+        myRobot->robot.step(timeStep);
+    }
+    system("python robotTracking.py");
 
     // int i = 0;
     // while (i < 50)
     // {
     // myRobot.goDoLap();
     // }
+
+    // cout << "yo wadup" << endl;
 
     return 0;
 }
