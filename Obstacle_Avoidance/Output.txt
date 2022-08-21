@@ -1,0 +1,30 @@
+[JBL_MTRN4110_PhaseD] Finding shortest paths...
+[JBL_MTRN4110_PhaseD] Path - 1:
+[JBL_MTRN4110_PhaseD]  --- --- --- --- --- --- --- --- --- 
+[JBL_MTRN4110_PhaseD] |        16  17 |                   |
+[JBL_MTRN4110_PhaseD]      ---     ---         ---         
+[JBL_MTRN4110_PhaseD] |    14  15 |   |       |   |       |
+[JBL_MTRN4110_PhaseD]  ---         --- --- ---     ---     
+[JBL_MTRN4110_PhaseD] |    13 |   |   |0x  1   2   3      |
+[JBL_MTRN4110_PhaseD]          ---     --- --- ---         
+[JBL_MTRN4110_PhaseD] |   |12  11  10  9      |5   4      |
+[JBL_MTRN4110_PhaseD]          ---         ---     ---     
+[JBL_MTRN4110_PhaseD] |   |           |8   7   6  |       |
+[JBL_MTRN4110_PhaseD]  --- --- --- --- --- --- --- --- ---
+[JBL_MTRN4110_PhaseD] 1 shortest paths found!
+[JBL_MTRN4110_PhaseD] Finding shortest path with least turns...
+[JBL_MTRN4110_PhaseD]  --- --- --- --- --- --- --- --- --- 
+[JBL_MTRN4110_PhaseD] |        16  17 |                   |
+[JBL_MTRN4110_PhaseD]      ---     ---         ---         
+[JBL_MTRN4110_PhaseD] |    14  15 |   |       |   |       |
+[JBL_MTRN4110_PhaseD]  ---         --- --- ---     ---     
+[JBL_MTRN4110_PhaseD] |    13 |   |   |0x  1   2   3      |
+[JBL_MTRN4110_PhaseD]          ---     --- --- ---         
+[JBL_MTRN4110_PhaseD] |   |12  11  10  9      |5   4      |
+[JBL_MTRN4110_PhaseD]          ---         ---     ---     
+[JBL_MTRN4110_PhaseD] |   |           |8   7   6  |       |
+[JBL_MTRN4110_PhaseD]  --- --- --- --- --- --- --- --- ---
+[JBL_MTRN4110_PhaseD] Shortest path with least turns found!
+[JBL_MTRN4110_PhaseD] Path Plan (28 steps): 03SRFLFRFLFFLFFFRFLFFLFRFLFLFFF
+[JBL_MTRN4110_PhaseD] Writing path plan to ../../PathPlan.txt...
+[JBL_MTRN4110_PhaseD] Path plan written to ../../PathPlan.txt!
