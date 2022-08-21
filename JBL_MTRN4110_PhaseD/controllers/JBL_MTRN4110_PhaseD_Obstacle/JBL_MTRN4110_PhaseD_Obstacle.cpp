@@ -2096,6 +2096,7 @@ public:
 
 int main()
 {
+    system("python Phase_C_Final.py");
     MapOverLord m;
     m.YEET();
 
